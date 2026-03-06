@@ -45,10 +45,12 @@ resource "docker_image" "client" {
 }
 
 resource "docker_container" "client" {
-  name    = "conteneur_client${count.index}"
-  image   = docker_image.client.image_id
-  count   = var.nbr_conteneur_client
-  command = ["sh", "-c", "curl -s http://nginx:80 && sleep 30"]
+  #name    = "conteneur_client${count.index}"
+  name     = "serveur-${each.key}"
+  image    = docker_image.client.image_id
+  for_each = toset(var.serveur-nom)
+  #count   = var.nbr_conteneur_client
+  command = ["sh", "-c", "curl -s http://nginx:80 && sleep 300"]
 
   networks_advanced {
     name = docker_network.private_network.name

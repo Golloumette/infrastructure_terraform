@@ -22,3 +22,7 @@ variable "nbr_conteneur_client" {
   type    = number
   default = 3
 }
+variable "serveur-nom" {
+  type    = list(string)
+  default = ["zeus", "poseidon", "hades"]
+}
