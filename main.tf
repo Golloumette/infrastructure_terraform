@@ -15,9 +15,10 @@ resource "docker_image" "nginx" {
 }
 
 resource "docker_container" "nginx" {
-  name  = var.nom_container 
+  name  = var.nom_container
   image = docker_image.nginx.image_id
   ports {
+    internal = var.int_port
     external = var.ext_port
   }
 }
