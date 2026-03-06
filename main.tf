@@ -22,3 +22,7 @@ resource "docker_container" "nginx" {
     external = var.ext_port
   }
 }
+
+output "nginx_container_id" {
+  value = docker_image.nginx.image_id
+}
