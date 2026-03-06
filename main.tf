@@ -13,7 +13,7 @@ provider "docker" { host = "tcp://localhost:2375" }
 
 resource "docker_network" "private_network" {
   name = "mon_reseau_docker"
-} 
+}
 #conteneur 1
 resource "docker_image" "nginx" {
   name         = var.image_docker
@@ -31,10 +31,10 @@ resource "docker_container" "nginx" {
   provisioner "local-exec" {
     command = "curl -s http://localhost:${var.ext_port} | grep 'Welcome'"
   }
-#accrocher le conteneur au reseau prive
-networks_advanced {
-  name = docker_network.private_network.name
-}
+  #accrocher le conteneur au reseau prive
+  networks_advanced {
+    name = docker_network.private_network.name
+  }
 
 }
 
@@ -45,14 +45,14 @@ resource "docker_image" "client" {
 }
 
 resource "docker_container" "client" {
-  name  = "conteneur_client"
-  image = docker_image.client.image_id
-
-  command = ["sh", "-c" ,"curl -s http://nginx:80 && sleep 60"]
+  name    = "conteneur_client${count.index}"
+  image   = docker_image.client.image_id
+  count   = var.nbr_conteneur_client
+  command = ["sh", "-c", "curl -s http://nginx:80 && sleep 30"]
 
   networks_advanced {
-  name = docker_network.private_network.name
- }
+    name = docker_network.private_network.name
+  }
 }
 
 

@@ -18,3 +18,7 @@ variable "int_port" {
   description = "Port interne"
   default     = 80
 }
+variable "nbr_conteneur_client" {
+  type    = number
+  default = 3
+}
