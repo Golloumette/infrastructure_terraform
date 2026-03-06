@@ -21,8 +21,15 @@ resource "docker_container" "nginx" {
     internal = var.int_port
     external = var.ext_port
   }
+
+  provisioner "local-exec" {
+    command = "curl -s http://localhost:${var.ext_port} | grep 'Welcome'"
+  }
 }
 
 output "nginx_container_id" {
   value = docker_image.nginx.image_id
 }
+
+  
+
