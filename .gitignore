@@ -1,0 +1,15 @@
+.terraform/
+
+.tfstate files
+*.tfstate
+*.tfstate.backup
+
+Variables files (sensitive info)
+*.tfvars
+*.tfvars.json
+
+Private keys
+*.pem
+
+Crash log files
+crash.logP
