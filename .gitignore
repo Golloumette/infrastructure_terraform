@@ -1,15 +1,14 @@
-.terraform/
-
-.tfstate files
+# Terraform
+**/.terraform/
 *.tfstate
 *.tfstate.backup
 
-Variables files (sensitive info)
+# Variables sensibles
 *.tfvars
 *.tfvars.json
 
-Private keys
+# Clés privées
 *.pem
 
-Crash log files
-crash.logP
+# Logs
+crash.log
