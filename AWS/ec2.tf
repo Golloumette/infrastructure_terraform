@@ -40,3 +40,25 @@ resource "aws_instance" "web" {
     Name = var.instance_name
   }
 }
+# Création EC2 instance BDD
+resource "aws_instance" "db" {
+  ami             = "ami-df5de72bdb3b"
+  instance_type   = var.instance_ec2
+  security_groups = [aws_security_group.web.name]
+  key_name        = aws_key_pair.deployer.key_name
+
+  user_data = <<-EOF
+              #!/bin/bash
+              yum update -y
+              echo "Serveur base de données prêt" > /home/ec2-user/info-bdd.txt
+              hostnamectl set-hostname serveur-bdd
+              EOF
+
+  tags = {
+    Name = "serveur-bdd"
+    Role = "database"
+    Env  = "dev"
+  }
+}
+
+
