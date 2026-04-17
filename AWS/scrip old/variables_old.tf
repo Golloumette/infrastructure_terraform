@@ -13,7 +13,7 @@ variable "instance_name" {
 variable "bucket_name" {
   description = "Nom du bucket S3"
   type        = string
-  default     = "demo-bucket-tf-gollou-891377124890"
+  default     = "demo-bucket-tf"
 }
 
 variable "security_group_port" {

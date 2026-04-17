@@ -4,7 +4,7 @@ resource "tls_private_key" "key" {
   rsa_bits  = 4096
 }
 
-# Create key pair in AWS
+# Create key pair
 resource "aws_key_pair" "deployer" {
   key_name   = "deployer-key"
   public_key = tls_private_key.key.public_key_openssh
@@ -17,49 +17,35 @@ resource "local_file" "private_key" {
   file_permission = "0600"
 }
 
-# Get a recent Amazon Linux 2 AMI dynamically
-data "aws_ami" "amazon_linux_2" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
-  }
-
-  filter {
-    name   = "state"
-    values = ["available"]
-  }
-}
-
-# Web server EC2
+# Create EC2 instance with Nginx
 resource "aws_instance" "web" {
-  ami                    = data.aws_ami.amazon_linux_2.id
-  instance_type          = var.instance_ec2
-  vpc_security_group_ids = [aws_security_group.web.id]
-  key_name               = aws_key_pair.deployer.key_name
+  ami             = "ami-df5de72bdb3b"
+  instance_type   = var.instance_ec2
+  security_groups = [aws_security_group.web.name]
+  key_name        = aws_key_pair.deployer.key_name
 
   user_data = <<-EOF
               #!/bin/bash
+              # Install and configure Nginx
               yum update -y
               amazon-linux-extras install -y nginx1
               systemctl start nginx
               systemctl enable nginx
-              echo "<h1>Hello from Terraform on AWS!</h1>" > /usr/share/nginx/html/index.html
+              
+              # Create a simple webpage
+              echo "<h1>Hello from Terraform and LocalStack!</h1>" > /usr/share/nginx/html/index.html
               EOF
 
   tags = {
     Name = var.instance_name
   }
 }
-
-# Database EC2
+# Création EC2 instance BDD
 resource "aws_instance" "db" {
-  ami                    = data.aws_ami.amazon_linux_2.id
-  instance_type          = var.instance_ec2
-  vpc_security_group_ids = [aws_security_group.web.id]
-  key_name               = aws_key_pair.deployer.key_name
+  ami             = "ami-df5de72bdb3b"
+  instance_type   = var.instance_ec2
+  security_groups = [aws_security_group.web.name]
+  key_name        = aws_key_pair.deployer.key_name
 
   user_data = <<-EOF
               #!/bin/bash
@@ -74,3 +60,5 @@ resource "aws_instance" "db" {
     Env  = "dev"
   }
 }
+
+
