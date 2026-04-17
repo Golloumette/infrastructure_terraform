@@ -17,7 +17,7 @@ resource "local_file" "private_key" {
   file_permission = "0600"
 }
 
-# Get a recent Amazon Linux 2 AMI dynamically
+# Get latest Amazon Linux 2 AMI
 data "aws_ami" "amazon_linux_2" {
   most_recent = true
   owners      = ["amazon"]
@@ -33,44 +33,30 @@ data "aws_ami" "amazon_linux_2" {
   }
 }
 
-# Web server EC2
+# EC2 instance for the Memory app
 resource "aws_instance" "web" {
   ami                    = data.aws_ami.amazon_linux_2.id
   instance_type          = var.instance_ec2
-  vpc_security_group_ids = [aws_security_group.web.id]
   key_name               = aws_key_pair.deployer.key_name
+  vpc_security_group_ids = [aws_security_group.web.id]
 
   user_data = <<-EOF
               #!/bin/bash
               yum update -y
-              amazon-linux-extras install -y nginx1
-              systemctl start nginx
-              systemctl enable nginx
-              echo "<h1>Hello from Terraform on AWS!</h1>" > /usr/share/nginx/html/index.html
+              amazon-linux-extras install docker -y
+              systemctl enable docker
+              systemctl start docker
+              usermod -a -G docker ec2-user
+
+              docker pull golloumette/memory-animals:latest
+
+              docker run -d \
+                --name memory-animals \
+                -p 80:80 \
+                golloumette/memory-animals:latest
               EOF
 
   tags = {
     Name = var.instance_name
-  }
-}
-
-# Database EC2
-resource "aws_instance" "db" {
-  ami                    = data.aws_ami.amazon_linux_2.id
-  instance_type          = var.instance_ec2
-  vpc_security_group_ids = [aws_security_group.web.id]
-  key_name               = aws_key_pair.deployer.key_name
-
-  user_data = <<-EOF
-              #!/bin/bash
-              yum update -y
-              echo "Serveur base de données prêt" > /home/ec2-user/info-bdd.txt
-              hostnamectl set-hostname serveur-bdd
-              EOF
-
-  tags = {
-    Name = "serveur-bdd"
-    Role = "database"
-    Env  = "dev"
   }
 }

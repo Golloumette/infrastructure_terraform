@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory des animaux</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Memory des animaux</h1>
+    <p class="subtitle">Retourne les cartes et retrouve les paires.</p>
+
+    <div class="infos">
+      <span>Coups : <strong id="moves">0</strong></span>
+      <span>Paires : <strong id="pairs">0</strong>/8</span>
+      <button id="restartBtn">Rejouer</button>
+    </div>
+
+    <section class="grid" id="gameBoard"></section>
+
+    <p id="message" class="message"></p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
